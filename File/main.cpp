@@ -1,15 +1,32 @@
-//
-//  main.cpp
-//  File
-//
-//  Created by Daniel Illescas Romero on 12/06/16.
-//  Copyright © 2016 Daniel Illescas Romero. All rights reserved.
-//
-
 #include <iostream>
+#include "File.hpp"
+
+#include <fstream>
+
+using namespace std;
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+	
+	// Write
+	File prueba("rw.txt", ios::out);
+	
+	prueba << "hello" << endl;
+	
+	// Read
+	prueba.open("rw.txt", ios::in);
+	
+	string read;
+	
+	// prueba >> read;
+	File::getline(prueba,read);
+	
+	cout << read << endl;
+	
+	
+	File b;
+	b.open("rw.txt", ios::out);
+	
+	b << "hi";
+	
+	return 0;
 }
