@@ -1,10 +1,12 @@
 #include "file.hpp"
 #include <string>
 
+#include <iostream>
+
 File::File(){}
 
 File::File(string name, ios_base::openmode mode){
-	rw.open(name,mode);
+	open(name,mode);
 }
 
 fstream & File::operator<<(string text){

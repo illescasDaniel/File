@@ -8,7 +8,11 @@ using namespace std;
 class File {
 	
 private:
+	
 	fstream rw;
+	string name;
+	
+	void close();
 	
 public:
 	
@@ -19,7 +23,6 @@ public:
 	fstream & operator>> (string & text);
 	
 	void open (string name, ios_base::openmode mode);
-	void close();
 	
 	~File();
 	
