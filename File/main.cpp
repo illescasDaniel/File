@@ -26,7 +26,7 @@ int main(int argc, const char * argv[]) {
 	File b;
 	b.open("rw.txt", ios::out);
 	
-	b << "hi";
+	b << "hi bro";
 	
 	return 0;
 }
