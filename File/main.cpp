@@ -28,5 +28,7 @@ int main(int argc, const char * argv[]) {
 	
 	b << "hi bro";
 	
+	b << "test 1";
+	
 	return 0;
 }
