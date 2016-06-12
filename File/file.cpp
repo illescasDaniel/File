@@ -1,8 +1,6 @@
 #include "file.hpp"
 #include <string>
 
-//
-
 File::File(){}
 
 File::File(string name, ios_base::openmode mode){
