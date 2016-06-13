@@ -56,7 +56,7 @@ int main(int argc, const char * argv[]) {
 	
 	
 	// EMPTY
-	/*cout << "TEST: " << endl;
+	cout << "TEST: " << endl;
 	
 	File test3;
 	
@@ -68,7 +68,7 @@ int main(int argc, const char * argv[]) {
 	string s;
 	test3 >> s;
 	
-	cout << s;*/
+	cout << s;
 	
 	return 0;
 }

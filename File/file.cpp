@@ -47,7 +47,7 @@ File::~File(){
 }
 
 string File::getName(){
-	return (rw.is_open()) ? name : "";
+	return name;
 }
 
 string File::getline(){
