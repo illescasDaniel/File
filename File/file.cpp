@@ -1,6 +1,8 @@
 #include "file.hpp"
 #include <string>
 
+#include <iostream>
+
 File::File(){}
 
 File::File(string name, ios_base::openmode mode){
@@ -22,8 +24,16 @@ fstream & File::operator>>(string & text){
 }
 
 void File::open(string name, ios_base::openmode mode){
+	
+	this->name = name;
+	
 	close();
 	rw.open(name,mode);
+	
+	if (!rw){
+		cerr << "Error" << endl;
+		return;
+	}
 }
 
 
@@ -34,6 +44,41 @@ void File::close(){
 
 File::~File(){
 	close();
+}
+
+string File::getName(){
+	return (rw.is_open()) ? name : "";
+}
+
+string File::getline(){
+	
+	string s;
+	std::getline(rw,s);
+	
+	return s;
+}
+
+void File::toFile(string name, string text){
+	File write(name,ios::out);
+	write << text;
+}
+
+string File::toString(){
+
+	open(this->name,ios::in);
+
+	string s2;
+	
+	while(!rw.eof())
+		s2 += getline() + '\n';
+	
+	return s2;
+}
+
+string File::toString(string name) {
+	
+	File read(name,ios::in);
+	return read.toString();
 }
 
 void File::getline(File & file, string & name){

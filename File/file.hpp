@@ -2,6 +2,7 @@
 #define file_hpp
 
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -11,7 +12,6 @@ private:
 	
 	fstream rw;
 	string name;
-	
 	void close();
 	
 public:
@@ -26,7 +26,17 @@ public:
 	
 	~File();
 	
+	
+	string toString();
+	static string toString(string name);
+	
+	static void toFile(string name, string text);
+	
+	string getline();
 	static void getline(File & file, string & name);
+	
+	string getName();
+	
 };
 
 #endif /* file_hpp */

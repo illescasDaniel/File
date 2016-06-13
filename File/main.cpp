@@ -1,37 +1,41 @@
 #include <iostream>
 #include "File.hpp"
 
-#include <fstream>
-
 using namespace std;
 
 int main(int argc, const char * argv[]) {
 	
 	// Write
-	File prueba("rw.txt", ios::out);
+	File test1("rw.txt", ios::out);
 	
-	prueba << "hello" << endl;
+	test1 << "hello" << endl;
 	
 	// Read
-	prueba.open("rw.txt", ios::in);
+	test1.open("rw.txt", ios::in);
 	
 	string read;
 	
-	// prueba >> read;
-	File::getline(prueba,read);
+	File::getline(test1,read);
 	
 	cout << read << endl;
 	
+	
 	// Write
 	File b;
-	b.open("rw.txt", ios::out);
+	b.open("rw2.txt", ios::out);
 	
 	b << "hi bro" << endl;
 	
-	b << "test 1";
-
+	b << "test 1" << endl;
+	
+	//cout << b.getline() << endl;
+	
+	
 	// Read
-	b.open("rw.txt",ios::in);
+	b.open("rw2.txt",ios::in);
+	
+	cout << b.getline() << endl;
+	cout << b.getline() << endl;
 	
 	string two;
 	b >> two;
@@ -39,12 +43,32 @@ int main(int argc, const char * argv[]) {
 	cout << two << endl;
 	
 	// Read
-	File test2("rw.txt",ios::in);
-	 
+	File test2("rw2.txt",ios::in);
+	
+	cout << test2.toString() << endl;
+	
+	
+	// Read and Write file in one line!
+	
+	cout << File::toString("rw2.txt") << endl;
+	
+	File::toFile("test2.txt","hello\nprogrammer");
+	
+	
+	// EMPTY
+	/*cout << "TEST: " << endl;
+	
+	File test3;
+	
+	cout << test3.getName() << endl;
+	cout << test3.getline() << endl;
+	cout << test3.toString() << endl;
+	test3 << "test";
+	
 	string s;
-	test2 >> s;
-	 
-	cout << s << endl;
+	test3 >> s;
+	
+	cout << s;*/
 	
 	return 0;
 }
