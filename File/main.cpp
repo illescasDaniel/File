@@ -7,6 +7,7 @@ int main(int argc, const char * argv[]) {
 	
 	// Write
 	File test1("rw.txt", ios::out);
+	cout << test1.getFileName() << endl;
 	
 	test1 << "hello" << endl;
 	
@@ -14,18 +15,16 @@ int main(int argc, const char * argv[]) {
 	test1.open("rw.txt", ios::in);
 	
 	string read;
-	
+		
 	File::getline(test1,read);
-	
+		
 	cout << read << endl;
-	
 	
 	// Write
 	File b;
 	b.open("rw2.txt", ios::out);
-	
 	b << "hi bro" << endl;
-	
+		
 	b << "test 1" << endl;
 	
 	//cout << b.getline() << endl;
@@ -60,7 +59,7 @@ int main(int argc, const char * argv[]) {
 	
 	File test3;
 	
-	cout << test3.getName() << endl;
+	cout << test3.getFileName() << endl;
 	cout << test3.getline() << endl;
 	cout << test3.toString() << endl;
 	test3 << "test";

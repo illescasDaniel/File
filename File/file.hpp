@@ -2,7 +2,6 @@
 #define file_hpp
 
 #include <fstream>
-#include <vector>
 
 using namespace std;
 
@@ -35,7 +34,7 @@ public:
 	string getline();
 	static void getline(File & file, string & name);
 	
-	string getName();
+	string getFileName();
 	
 };
 

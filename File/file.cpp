@@ -1,56 +1,54 @@
 #include "file.hpp"
 #include <string>
 
-#include <iostream>
+File::File() {
+	name = "";
+}
 
-File::File(){}
-
-File::File(string name, ios_base::openmode mode){
+File::File(string name, ios_base::openmode mode) {
 	open(name,mode);
 }
 
-fstream & File::operator<<(string text){
+fstream & File::operator<<(string text) {
 	if (rw.is_open())
 		rw << text;
 	
 	return rw;
 }
 
-fstream & File::operator>>(string & text){
+fstream & File::operator>>(string & text) {
 	if (rw.is_open())
 		rw >> text;
 	
 	return rw;
 }
 
-void File::open(string name, ios_base::openmode mode){
+void File::open(string name, ios_base::openmode mode) {
 	
 	this->name = name;
 	
 	close();
 	rw.open(name,mode);
 	
-	if (!rw){
-		cerr << "Error" << endl;
-		return;
+	if (rw.fail()) {
+		printf("File couldn't be open");
 	}
 }
 
-
-void File::close(){
+void File::close() {
 	if (rw.is_open())
 		rw.close();
 }
 
-File::~File(){
+File::~File() {
 	close();
 }
 
-string File::getName(){
+string File::getFileName() {
 	return name;
 }
 
-string File::getline(){
+string File::getline() {
 	
 	string s;
 	std::getline(rw,s);
@@ -58,12 +56,12 @@ string File::getline(){
 	return s;
 }
 
-void File::toFile(string name, string text){
+void File::toFile(string name, string text) {
 	File write(name,ios::out);
 	write << text;
 }
 
-string File::toString(){
+string File::toString() {
 
 	open(this->name,ios::in);
 
@@ -81,6 +79,6 @@ string File::toString(string name) {
 	return read.toString();
 }
 
-void File::getline(File & file, string & name){
+void File::getline(File & file, string & name) {
 	std::getline(file.rw,name);
 }
