@@ -6,6 +6,6 @@ Main features:
 * Static methods to read or write files in one line  
 
 Use the makefile to compile the example program or just: 
-```bash
+```shell
 g++ -std=c++11 main.cpp src/file.cpp -I include
 ```
