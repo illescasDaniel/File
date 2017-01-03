@@ -1,5 +1,4 @@
-#ifndef file_hpp
-#define file_hpp
+#pragma once
 
 #include <fstream>
 
@@ -16,26 +15,20 @@ private:
 public:
 	
 	File();
-	File(string name, ios_base::openmode mode);
+	File(const string& name, const ios_base::openmode& mode);
 	
-	fstream & operator<< (string text);
-	fstream & operator>> (string & text);
-	
-	void open (string name, ios_base::openmode mode);
+	void open(const string& name, const ios_base::openmode& mode);
+
+	fstream & operator<<(const string& text);
+	fstream & operator>>(string& text);
+
+	string getFileName() const;
+	string getline();
+	string toString();
 	
 	~File();
 	
-	
-	string toString();
-	static string toString(string name);
-	
-	static void toFile(string name, string text);
-	
-	string getline();
-	static void getline(File & file, string & name);
-	
-	string getFileName();
-	
+	static string toString(const string& name);
+	static void saveTextTo(const string& fileName, const string& text);
+	static void getline(File& file, string& name);
 };
-
-#endif /* file_hpp */
