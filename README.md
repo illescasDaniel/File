@@ -1,6 +1,6 @@
 # File
 
-[![Version](https://img.shields.io/badge/version-v2.0-green.svg)](https://github.com/illescasDaniel/File/releases)
+[![Version](https://img.shields.io/badge/version-v2.1-green.svg)](https://github.com/illescasDaniel/File/releases)
 
 File class using fstream to easily manage files in C++  
 

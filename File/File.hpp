@@ -41,6 +41,9 @@ namespace evt {
 		
 	public:
 		
+		// Only for binary files
+		bool writeAtEnd = true;
+		
 		File(const std::string& fileName) {
 			this->fileName = fileName;
 		}
@@ -49,13 +52,15 @@ namespace evt {
 		
 		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
 		void writeInBinary(const Type& text) {
-			open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
 			fileStream.write(text.c_str(), text.length());
 		}
 		
 		template <typename Type, typename = typename std::enable_if<!std::is_same<Type, std::string>::value>::type>
 		void writeInBinary(Type contentToWrite) {
-			open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
 			fileStream.write(reinterpret_cast<char*>(&contentToWrite), sizeof(contentToWrite));
 		}
 		
@@ -75,6 +80,11 @@ namespace evt {
 			fileStream.read(readTextChar.get(), size);
 			
 			return readTextChar.get();
+		}
+		
+		void seekPosition(size_t offsetPosition, std::ios_base::seekdir position = std::ios::beg) {
+			writeAtEnd = false;
+			fileStream.seekp(offsetPosition, position);
 		}
 		
 		/* TEXT */
