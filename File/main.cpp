@@ -2,66 +2,28 @@
 #include "File.hpp"
 
 using namespace std;
+using namespace evt;
 
 int main() {
 	
-	// Write
-	File test1("rw.txt", ios::out);
-	cout << test1.getFileName() << endl;
+	File test2("111.txt");
+	test2.write("Holaa\n");
+	test2.write("Hello!! :D");
 	
-	test1 << "hello" << endl;
+	cout << test2.getline() << endl;
+	cout << test2.read() << endl;
 	
-	// Read
-	test1.open("rw.txt", ios::in);
+	test2.open("222.bin");
+	test2.writeInBinary<int>(2000);
+	test2.writeInBinary<string>("test!");
+	test2.writeInBinary<float>(9.8);
 	
-	string read;
-		
-	File::getline(test1,read);
-	cout << read << endl;
+	cout << test2.readFromBinary<int>() << endl;
+	cout << test2.readFromBinary<string>(5) << endl;
+	cout << test2.readFromBinary<float>() << endl;
 	
-	// Write
-	File b;
-	b.open("rw2.txt", ios::out);
-	b << "hi bro" << endl;
-		
-	b << "test 1" << endl;
-	
-	// Read
-	b.open("rw2.txt", ios::in);
-	
-	cout << b.getline() << endl;
-	
-	string two;
-	
-	b >> two;
-	cout << two << endl;
-	
-	b >> two;
-	cout << two << endl;
-	
-	// Read
-	File test2("rw2.txt", ios::in);
-	
-	cout << test2.toString() << endl;
-	
-	// Read and Write file in one line!
-	cout << File::toString("rw2.txt") << endl;
-	File::saveTextTo("test2.txt", "hello\nprogrammer");
-	
-	// EMPTY
-	cout << "TEST EMPTY: " << endl;
-	
-	File test3;
-	
-	cout << test3.getFileName() << endl;
-	cout << test3.getline() << endl;
-	cout << test3.toString() << endl;
-	test3 << "test";
-	
-	string s;
-	test3 >> s;
-	
-	cout << s;
+	File::saveTextTo("3333.txt", "Hi, this is a teasdfst!");
+	cout << File::toString("3333.txt") << endl;
 	
 	return 0;
 }
