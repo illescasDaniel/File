@@ -9,7 +9,3 @@ Main features:
 * Static methods to read or write files in one line
 * Write in text or binary mode
 
-Use the makefile to compile the example program or just: 
-```shell
-g++ -std=c++11 main.cpp 
-```
