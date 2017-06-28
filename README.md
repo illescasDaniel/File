@@ -1,8 +1,8 @@
 # File
 
-[![Version](https://img.shields.io/badge/version-v2.1-green.svg)](https://github.com/illescasDaniel/File/releases)
+[![Version](https://img.shields.io/badge/version-v2.2-green.svg)](https://github.com/illescasDaniel/File/releases)
 
-File class using fstream to easily manage files in C++  
+A wrapper around std::fstream to easily read and write content from/to files in C++.
 
 Main features:
 * Open files (read or write) without having to close them manually

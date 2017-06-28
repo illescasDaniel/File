@@ -13,6 +13,10 @@ int main() {
 	cout << test2.getline() << endl;
 	cout << test2.read() << endl;
 	
+	test2.seekInputPosition(0);
+	
+	cout << test2.getline() << endl;
+	
 	test2.open("222.bin");
 	test2.writeInBinary<int>(2000);
 	//test2.seekPosition(1); // now it writes at position 1, but also changes the property "writeAtEnd"!
@@ -22,6 +26,9 @@ int main() {
 	cout << test2.readFromBinary<int>() << endl;
 	cout << test2.readFromBinary<string>(4) << endl;
 	cout << test2.readFromBinary<float>() << endl;
+	
+	test2.seekInputPosition(0);
+	cout << test2.readFromBinary<int>() << endl;
 	
 	File::saveTextTo("3333.txt", "Hi, this is a teasdfst!");
 	cout << File::toString("3333.txt") << endl;

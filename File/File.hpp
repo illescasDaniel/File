@@ -30,10 +30,21 @@
 namespace evt {
 	
 	class File {
-
+		
+	public:
+		
+		enum Mode {
+			binary,
+			normal,
+			both
+		};
+		
+	private:
+		
 		std::fstream fileStream;
 		std::ios_base::openmode inputOutputMode;
 		std::string fileName;
+		Mode mode = Mode::both;
 		
 		void open(const std::ios_base::openmode inputOutputMode) {
 			
@@ -44,7 +55,7 @@ namespace evt {
 				fileStream.open(fileName, inputOutputMode);
 				
 				if (fileStream.fail()) {
-					std::cout << "File couldn't be open" << std::endl;
+					std::cerr << "File couldn't be open" << std::endl;
 				}
 			}
 		}
@@ -55,19 +66,27 @@ namespace evt {
 			}
 		}
 		
+		void incompatibleMode() {
+			std::cerr << "Error: Incompatible Mode" << std::endl;
+		}
+		
 	public:
 		
 		// Only for binary files
 		bool writeAtEnd = true;
 		
-		File(const std::string& fileName) {
+		File(const std::string& fileName, const Mode mode = Mode::both) {
 			this->fileName = fileName;
+			this->mode = mode;
 		}
 		
 		/* BINARY */
 		
 		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
 		void writeInBinary(const Type& text) {
+			
+			if (mode == Mode::normal) { incompatibleMode(); return; }
+			
 			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
 			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
 			fileStream.write(text.c_str(), text.length());
@@ -75,6 +94,9 @@ namespace evt {
 		
 		template <typename Type, typename = typename std::enable_if<!std::is_same<Type, std::string>::value>::type>
 		void writeInBinary(Type contentToWrite) {
+			
+			if (mode == Mode::normal) { incompatibleMode(); return; }
+			
 			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
 			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
 			fileStream.write(reinterpret_cast<char*>(&contentToWrite), sizeof(contentToWrite));
@@ -82,6 +104,9 @@ namespace evt {
 		
 		template <typename Type, typename = typename std::enable_if<!std::is_same<Type, std::string>::value>::type>
 		Type readFromBinary() {
+			
+			if (mode == Mode::normal) { incompatibleMode(); return Type{}; }
+			
 			Type readInput {};
 			open(std::ios::in | std::ios::binary);
 			fileStream.read(reinterpret_cast<char*>(&readInput), sizeof(readInput));
@@ -90,6 +115,9 @@ namespace evt {
 		
 		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
 		Type readFromBinary(std::size_t size) {
+			
+			if (mode == Mode::normal) { incompatibleMode(); return Type{}; }
+			
 			open(std::ios::in | std::ios::binary);
 			
 			std::unique_ptr<char> readTextChar(new char[size]);
@@ -99,6 +127,9 @@ namespace evt {
 		}
 		
 		void seekPosition(std::size_t offsetPosition, std::ios_base::seekdir position = std::ios::beg) {
+			
+			if (mode == Mode::normal) { incompatibleMode(); return; }
+			
 			writeAtEnd = false;
 			fileStream.seekp(offsetPosition, position);
 		}
@@ -107,12 +138,17 @@ namespace evt {
 		
 		template <typename Type>
 		void write(const Type& contentToWrite) {
+			
+			if (mode == Mode::binary) { incompatibleMode(); return; }
+			
 			open(std::ios::out | std::ios::in | std::ios::app);
 			fileStream << contentToWrite;
 		}
 		
 		// Reads text content word by word (?)
 		std::string read() {
+			
+			if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
 			
 			std::string readContent;
 			open(std::ios::in);
@@ -122,6 +158,8 @@ namespace evt {
 		}
 		
 		std::string getline() {
+			
+			if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
 			
 			std::string s;
 			
@@ -155,10 +193,15 @@ namespace evt {
 			fileToWrite.write(text);
 		}
 		
-		/* EXTRA */
+		/* OTHER */
 		
-		void open(const std::string& fileName) {
+		void seekInputPosition(std::size_t offsetPosition, std::ios_base::seekdir position = std::ios::beg) {
+			fileStream.seekg(offsetPosition, position);
+		}
+		
+		void open(const std::string& fileName, const Mode mode = Mode::both) {
 			this->fileName = fileName;
+			this->mode = mode;
 			this->close();
 		}
 		
