@@ -233,6 +233,7 @@
 		65E0AF0A1D0DC5D6005554B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -240,6 +241,7 @@
 		65E0AF0B1D0DC5D6005554B0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

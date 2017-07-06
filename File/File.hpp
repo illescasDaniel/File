@@ -27,6 +27,10 @@
 #include <fstream>
 #include <string>
 
+#if (__cplusplus >= 201406)
+	#include <experimental/optional>
+#endif
+
 namespace evt {
 	
 	class File {
@@ -169,6 +173,41 @@ namespace evt {
 			return s;
 		}
 		
+		#if (__cplusplus >= 201406)
+		
+				std::experimental::optional<std::string> safeRead() {
+					
+					if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
+					
+					std::string readContent;
+					open(std::ios::in);
+					fileStream >> readContent;
+					
+					if (fileStream.eof() && readContent.empty()) {
+						return std::experimental::nullopt;
+					}
+					
+					return readContent;
+				}
+		
+				std::experimental::optional<std::string> safeGetline() {
+					
+					if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
+					
+					std::string s;
+					
+					open(std::ios::in);
+					std::getline(fileStream, s);
+					
+					if (fileStream.eof() && s.empty()) {
+						return std::experimental::nullopt;
+					}
+					
+					return s;
+				}
+		
+		#endif
+		
 		std::string toString() {
 			
 			this->open(std::ios::in);
@@ -203,6 +242,10 @@ namespace evt {
 			this->fileName = fileName;
 			this->mode = mode;
 			this->close();
+		}
+		
+		bool endOfFile() const {
+			return fileStream.eof();
 		}
 		
 		std::string getFileName() const {

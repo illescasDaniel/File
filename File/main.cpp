@@ -4,7 +4,46 @@
 using namespace std;
 using namespace evt;
 
+#if (__cplusplus >= 201406)
+	#include <experimental/optional>
+	using namespace experimental;
+#endif
+
 int main() {
+	
+	/* C++17 example */
+	
+    #if (__cplusplus >= 201406)
+	
+		File stack("name.txt");
+		stack.write("name=Daniel\nage=20");
+	
+		optional<string> readContent;
+	
+		int age {};
+		string name {};
+	
+		while ((readContent = stack.safeGetline()) != nullopt) {
+			
+			string content = *readContent;
+			
+			if (size_t position = content.find("="); position != string::npos) {
+				
+				string variableName = content.substr(0, position);
+				string variableValue = content.substr(position+1, content.size()); // string must have a value... else we should check if position+1 is correct
+				
+				if (variableName == "name") {
+					name = variableValue;
+				}
+				else if (variableName == "age") {
+					age = stoi(variableValue);
+				}
+			}
+		}
+		cout << "My name is: " << name << ", my age is: " << age << endl;
+	
+    #endif
+	/* */
 	
 	File test2("111.txt");
 	test2.write("Holaa!! :D\n");

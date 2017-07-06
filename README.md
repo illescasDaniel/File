@@ -1,6 +1,6 @@
 # File
 
-[![Version](https://img.shields.io/badge/version-v2.2-green.svg)](https://github.com/illescasDaniel/File/releases)
+[![Version](https://img.shields.io/badge/version-v2.3-green.svg)](https://github.com/illescasDaniel/File/releases)
 
 A wrapper around std::fstream to easily read and write content from/to files in C++.
 
