@@ -183,7 +183,7 @@ namespace evt {
 					open(std::ios::in);
 					fileStream >> readContent;
 					
-					if (fileStream.eof() && readContent.empty()) {
+					if ((fileStream.eof() && readContent.empty()) || fileStream.fail()) {
 						return std::experimental::nullopt;
 					}
 					
@@ -199,7 +199,7 @@ namespace evt {
 					open(std::ios::in);
 					std::getline(fileStream, s);
 					
-					if (fileStream.eof() && s.empty()) {
+					if ((fileStream.eof() && s.empty()) || fileStream.fail()) {
 						return std::experimental::nullopt;
 					}
 					
@@ -212,10 +212,11 @@ namespace evt {
 			
 			this->open(std::ios::in);
 			
+			std::string line;
 			std::string outputContent;
 			
-			while(!fileStream.eof()) {
-				outputContent += this->getline() + '\n';
+			while(std::getline(fileStream, line)) {
+				outputContent += line + '\n';
 			}
 			
 			return outputContent;

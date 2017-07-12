@@ -70,7 +70,7 @@ int main() {
 	cout << test2.readFromBinary<int>() << endl;
 	
 	File::saveTextTo("3333.txt", "Hi, this is a teasdfst!");
-	cout << File::toString("3333.txt") << endl;
+	cout << "TO STRING: " << File::toString("3333.txt") << endl;
 	
 	return 0;
 }
