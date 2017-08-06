@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- Copyright (c) 2017 Daniel Illescas Romero
+ Copyright (c) 2017 Daniel Illescas Romero <https://github.com/illescasDaniel>
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
-*/
+ */
 
 #pragma once
 
@@ -28,7 +28,7 @@
 #include <string>
 
 #if (__cplusplus >= 201406)
-	#include <experimental/optional>
+#include <experimental/optional>
 #endif
 
 namespace evt {
@@ -47,8 +47,8 @@ namespace evt {
 		
 		std::fstream fileStream;
 		std::ios_base::openmode inputOutputMode;
-		std::string fileName;
-		Mode mode = Mode::both;
+		std::string fileName_;
+		Mode mode {Mode::both};
 		
 		void open(const std::ios_base::openmode inputOutputMode) {
 			
@@ -56,7 +56,7 @@ namespace evt {
 				
 				close();
 				this->inputOutputMode = inputOutputMode;
-				fileStream.open(fileName, inputOutputMode);
+				fileStream.open(fileName_, inputOutputMode);
 				
 				if (fileStream.fail()) {
 					std::cerr << "File couldn't be open" << std::endl;
@@ -80,7 +80,7 @@ namespace evt {
 		bool writeAtEnd = true;
 		
 		File(const std::string& fileName, const Mode mode = Mode::both) {
-			this->fileName = fileName;
+			this->fileName_ = fileName;
 			this->mode = mode;
 		}
 		
@@ -173,40 +173,40 @@ namespace evt {
 			return s;
 		}
 		
-		#if (__cplusplus >= 201406)
+#if (__cplusplus >= 201406)
 		
-				std::experimental::optional<std::string> safeRead() {
-					
-					if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
-					
-					std::string readContent;
-					open(std::ios::in);
-					fileStream >> readContent;
-					
-					if ((fileStream.eof() && readContent.empty()) || fileStream.fail()) {
-						return std::experimental::nullopt;
-					}
-					
-					return readContent;
-				}
+		std::experimental::optional<std::string> safeRead() {
+			
+			if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
+			
+			std::string readContent;
+			open(std::ios::in);
+			fileStream >> readContent;
+			
+			if ((fileStream.eof() && readContent.empty()) || fileStream.fail()) {
+				return std::experimental::nullopt;
+			}
+			
+			return readContent;
+		}
 		
-				std::experimental::optional<std::string> safeGetline() {
-					
-					if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
-					
-					std::string s;
-					
-					open(std::ios::in);
-					std::getline(fileStream, s);
-					
-					if ((fileStream.eof() && s.empty()) || fileStream.fail()) {
-						return std::experimental::nullopt;
-					}
-					
-					return s;
-				}
+		std::experimental::optional<std::string> safeGetline() {
+			
+			if (mode == Mode::binary) { incompatibleMode(); return std::string{}; }
+			
+			std::string s;
+			
+			open(std::ios::in);
+			std::getline(fileStream, s);
+			
+			if ((fileStream.eof() && s.empty()) || fileStream.fail()) {
+				return std::experimental::nullopt;
+			}
+			
+			return s;
+		}
 		
-		#endif
+#endif
 		
 		std::string toString() {
 			
@@ -240,7 +240,7 @@ namespace evt {
 		}
 		
 		void open(const std::string& fileName, const Mode mode = Mode::both) {
-			this->fileName = fileName;
+			this->fileName_ = fileName;
 			this->mode = mode;
 			this->close();
 		}
@@ -249,8 +249,8 @@ namespace evt {
 			return fileStream.eof();
 		}
 		
-		std::string getFileName() const {
-			return fileName;
+		std::string fileName() const noexcept {
+			return fileName_;
 		}
 		
 		~File() {
