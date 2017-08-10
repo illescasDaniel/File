@@ -64,12 +64,6 @@ namespace evt {
 			}
 		}
 		
-		void close() {
-			if (fileStream.is_open()) {
-				fileStream.close();
-			}
-		}
-		
 		void incompatibleMode() {
 			std::cerr << "Error: Incompatible Mode" << std::endl;
 		}
@@ -86,6 +80,22 @@ namespace evt {
 		
 		/* BINARY */
 		
+		#if (__cplusplus >= 201406)
+		template <typename Type>
+		void writeInBinary(Type&& content) {
+			
+			if (mode == Mode::normal) { incompatibleMode(); return; }
+			
+			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
+			
+			if constexpr (!std::is_same<Type, std::string>()) {
+				fileStream.write(reinterpret_cast<char*>(&content), sizeof(content));
+			} else {
+				fileStream.write(content.c_str(), content.length());
+			}
+		}
+		#else
 		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
 		void writeInBinary(const Type& text) {
 			
@@ -105,6 +115,7 @@ namespace evt {
 			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
 			fileStream.write(reinterpret_cast<char*>(&contentToWrite), sizeof(contentToWrite));
 		}
+		#endif
 		
 		template <typename Type, typename = typename std::enable_if<!std::is_same<Type, std::string>::value>::type>
 		Type readFromBinary() {
@@ -223,8 +234,7 @@ namespace evt {
 		}
 		
 		static std::string toString(const std::string& fileName) {
-			File fileToRead(fileName);
-			return fileToRead.toString();
+			return File(fileName).toString();
 		}
 		
 		static void saveTextTo(const std::string& fileName, const std::string& text) {
@@ -251,6 +261,13 @@ namespace evt {
 		
 		std::string fileName() const noexcept {
 			return fileName_;
+		}
+		
+		// Optional to use, the class automatically closes the file
+		void close() {
+			if (fileStream.is_open()) {
+				fileStream.close();
+			}
 		}
 		
 		~File() {
