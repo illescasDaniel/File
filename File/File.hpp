@@ -26,6 +26,7 @@
 
 #include <fstream>
 #include <string>
+#include <stdexcept>
 
 #if (__cplusplus >= 201406)
 #include <experimental/optional>
@@ -33,6 +34,39 @@
 
 namespace evt {
 	
+	class Log {
+	
+	public:
+		enum Mode {
+			exception,
+			errorOutput,
+			normalOutput
+		};
+	private:
+		static constexpr Mode errorGlobalMode = Mode::errorOutput;
+	public:
+		
+		static void message(const char* message) {
+			if constexpr (Log::errorGlobalMode == Mode::exception) {
+				throw std::runtime_error(message);
+			} else if constexpr (Log::errorGlobalMode == Mode::errorOutput) {
+				std::cerr << "Error: " << message << std::endl;
+			} else if constexpr (Log::normalOutput == Mode::normalOutput) {
+				std::cout << "Error: " << message << std::endl;
+			}
+		}
+		
+		static void message(const char* message, Mode errorMode) {
+			if (errorMode == Mode::exception) {
+				throw std::runtime_error(message);
+			} else if (errorMode == Mode::errorOutput) {
+				std::cerr << "Error: " << message << std::endl;
+			} else if (errorMode == Mode::normalOutput) {
+				std::cout << "Error: " << message << std::endl;
+			}
+		}
+	};
+	//
 	class File {
 		
 	public:
@@ -59,35 +93,40 @@ namespace evt {
 				fileStream.open(fileName_, inputOutputMode);
 				
 				if (fileStream.fail()) {
-					std::cerr << "File couldn't be open" << std::endl;
+					Log::message("File couldn't be open");
 				}
 			}
 		}
 		
 		void incompatibleMode() {
-			std::cerr << "Error: Incompatible Mode" << std::endl;
+			Log::message("Incompatible Mode");
 		}
 		
 	public:
-		
-		// Only for binary files
-		bool writeAtEnd = true;
 		
 		File(const std::string& fileName, const Mode mode = Mode::both) {
 			this->fileName_ = fileName;
 			this->mode = mode;
 		}
 		
+		static File openInBinary(const std::string& fileName) {
+			return File(fileName, Mode::binary);
+		}
+		
+		static File openPlainText(const std::string& fileName) {
+			return File(fileName, Mode::normal);
+		}
+		
 		/* BINARY */
 		
 		#if (__cplusplus >= 201406)
 		template <typename Type>
-		void writeInBinary(Type&& content) {
+		void writeInBinary(Type&& content, bool appendContent = true) {
 			
 			if (mode == Mode::normal) { incompatibleMode(); return; }
 			
-			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
-			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
+			if (appendContent) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			} else { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::trunc); }
 			
 			if constexpr (!std::is_same<Type, std::string>()) {
 				fileStream.write(reinterpret_cast<char*>(&content), sizeof(content));
@@ -97,22 +136,22 @@ namespace evt {
 		}
 		#else
 		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
-		void writeInBinary(const Type& text) {
+		void writeInBinary(const Type& text, bool appendContent = true) {
 			
 			if (mode == Mode::normal) { incompatibleMode(); return; }
 			
-			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
-			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
+			if (appendContent) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			} else { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::trunc); }
 			fileStream.write(text.c_str(), text.length());
 		}
 		
 		template <typename Type, typename = typename std::enable_if<!std::is_same<Type, std::string>::value>::type>
-		void writeInBinary(Type contentToWrite) {
+		void writeInBinary(Type contentToWrite, bool appendContent = true) {
 			
 			if (mode == Mode::normal) { incompatibleMode(); return; }
 			
-			if (writeAtEnd) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
-			} else { open(std::ios::binary | std::ios::out | std::ios::in); }
+			if (appendContent) { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
+			} else { open(std::ios::binary | std::ios::out | std::ios::in | std::ios::trunc); }
 			fileStream.write(reinterpret_cast<char*>(&contentToWrite), sizeof(contentToWrite));
 		}
 		#endif
@@ -144,19 +183,20 @@ namespace evt {
 		void seekPosition(std::size_t offsetPosition, std::ios_base::seekdir position = std::ios::beg) {
 			
 			if (mode == Mode::normal) { incompatibleMode(); return; }
-			
-			writeAtEnd = false;
+
 			fileStream.seekp(offsetPosition, position);
 		}
 		
 		/* TEXT */
 		
 		template <typename Type>
-		void write(const Type& contentToWrite) {
+		void write(const Type& contentToWrite, bool appendContent = true) {
 			
 			if (mode == Mode::binary) { incompatibleMode(); return; }
 			
-			open(std::ios::out | std::ios::in | std::ios::app);
+			if (appendContent) { open(std::ios::out | std::ios::in | std::ios::app); }
+			else { open(std::ios::out | std::ios::in | std::ios::trunc); }
+			
 			fileStream << contentToWrite;
 		}
 		

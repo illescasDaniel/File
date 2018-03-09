@@ -11,7 +11,18 @@ using namespace evt;
 
 int main() {
 	
-	/* C++17 example */
+	//auto myTestFile = File::openInBinary("/Users/Daniel/Desktop/MyFile.bin");
+	//myTestFile.writeInBinary(10);
+	//myTestFile.writeInBinary("HolaA"s, false); //
+	
+	//cout << myTestFile.readFromBinary<int>() << endl;
+	//cout << myTestFile.readFromBinary<string>(4) << endl;
+	
+	//cout << myTestFile.toString() << endl;
+	
+	//myTestFile.writeInBinary(10);
+	
+	// C++17 example
 	
     #if (__cplusplus >= 201406)
 	
@@ -43,7 +54,6 @@ int main() {
 		cout << "My name is: " << name << ", my age is: " << age << endl;
 	
     #endif
-	/* */
 	
 	File test2("111.txt");
 	test2.write("Holaa!! :D\n");
