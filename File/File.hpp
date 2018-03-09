@@ -43,9 +43,11 @@ namespace evt {
 			normalOutput
 		};
 	private:
+		#if (__cplusplus >= 201406)
 		static constexpr Mode errorGlobalMode = Mode::errorOutput;
+       #endif
 	public:
-		
+		#if (__cplusplus >= 201406)
 		static void message(const char* message) {
 			if constexpr (Log::errorGlobalMode == Mode::exception) {
 				throw std::runtime_error(message);
@@ -55,7 +57,7 @@ namespace evt {
 				std::cout << "Error: " << message << std::endl;
 			}
 		}
-		
+       #endif
 		static void message(const char* message, Mode errorMode) {
 			if (errorMode == Mode::exception) {
 				throw std::runtime_error(message);
