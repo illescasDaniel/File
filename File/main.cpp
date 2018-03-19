@@ -11,6 +11,8 @@ using namespace evt;
 
 int main() {
 	
+	boolalpha(cout);
+	
 	//auto myTestFile = File::openInBinary("/Users/Daniel/Desktop/MyFile.bin");
 	//myTestFile.writeInBinary(10);
 	//myTestFile.writeInBinary("HolaA"s, false); //
@@ -56,6 +58,9 @@ int main() {
     #endif
 	
 	File test2("111.txt");
+	
+	cout << File::exists("1111.txt") << endl;
+	
 	test2.write("Holaa!! :D\n");
 	test2.write("Hello");
 	

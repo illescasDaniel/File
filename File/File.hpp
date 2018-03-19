@@ -119,6 +119,11 @@ namespace evt {
 			return File(fileName, Mode::normal);
 		}
 		
+		static bool exists(const std::string& filePath) {
+			std::ifstream file(filePath);
+			return !file.fail();
+		}
+		
 		/* BINARY */
 		
 		#if (__cplusplus >= 201406)
