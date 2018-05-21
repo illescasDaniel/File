@@ -27,6 +27,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
+#include <memory>
 
 #if (__cplusplus >= 201406)
 #include <experimental/optional>
