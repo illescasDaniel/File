@@ -150,19 +150,6 @@ namespace evt {
 			fileStream >> readContent;
 
 			return readContent;
-
-			/*open(std::ios::in | std::ios::binary);
-
-			std::unique_ptr<char> readTextChar(new char[size+1]);
-			if (offset > 0) {
-				seekPosition(offset);
-			}
-			fileStream.read(readTextChar.get(), size+1);*/
-
-			//std::string output = readTextChar.get();
-			//output[size] = '\0';
-			//std::cout << output[size] << std::endl;
-			//return output;
 		}
 
 		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
