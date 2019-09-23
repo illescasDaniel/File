@@ -35,11 +35,6 @@ namespace evt {
 	class BaseFileIO {
 	public:
 		
-		enum class Mode {
-			binary,
-			plainText
-		};
-		
 		struct OpenCloseException : public std::runtime_error {
 			OpenCloseException() :runtime_error("error") {}
 			OpenCloseException(const std::string& message) :runtime_error(message.c_str()) {}
@@ -50,10 +45,13 @@ namespace evt {
 		std::fstream fileStream;
 		std::ios_base::openmode inputOutputMode;
 		std::string fileName_;
-		const Mode mode;
 		
 		void open(const std::ios_base::openmode inputOutputMode) noexcept(false) {
 			
+			if (this->inputOutputMode == inputOutputMode) {
+				return;
+			}
+
 			close();
 			this->inputOutputMode = inputOutputMode;
 			fileStream.open(fileName_, inputOutputMode);
@@ -63,7 +61,7 @@ namespace evt {
 			}
 		}
 		
-		BaseFileIO(const std::string& fileName, const Mode mode = Mode::plainText) : mode(mode) {
+		BaseFileIO(const std::string& fileName) {
 			this->fileName_ = fileName;
 		}
 
@@ -106,10 +104,10 @@ namespace evt {
 	class BinaryFileIO : public BaseFileIO {
 	public:
 
-		BinaryFileIO(const std::string& fileName, const Mode mode = Mode::plainText) : BaseFileIO(fileName, mode) {}
+		BinaryFileIO(const std::string& fileName) : BaseFileIO(fileName) {}
 
 		template <typename Type>
-		void writeInBinary(Type&& content, bool appendContent = true) {
+		void write(Type&& content, bool appendContent = true) {
 
 			if (appendContent) {
 				open(std::ios::binary | std::ios::out | std::ios::in | std::ios::app);
@@ -125,23 +123,51 @@ namespace evt {
 		}
 
 		template <typename Type, typename = typename std::enable_if<!std::is_same<Type, std::string>::value>::type>
-		Type readFromBinary() {
+		Type readWithOffset(std::size_t offset) {
 
 			Type readInput{};
 			open(std::ios::in | std::ios::binary);
+			if (offset > 0) {
+				seekPosition(offset);
+			}
 			fileStream.read(reinterpret_cast<char*>(&readInput), sizeof(readInput));
 			return readInput;
 		}
 
+		template <typename Type, typename = typename std::enable_if<!std::is_same<Type, std::string>::value>::type>
+		Type read() {
+			return readWithOffset<Type>(0);
+		}
+
 		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
-		Type readFromBinary(std::size_t size) {
+		Type readWithOffset(std::size_t size, std::size_t offset) {
 
-			open(std::ios::in | std::ios::binary);
+			std::string readContent;
+			open(std::ios::in);
+			if (offset > 0) {
+				seekInputPosition(offset);
+			}
+			fileStream >> readContent;
 
-			std::unique_ptr<char> readTextChar(new char[size]);
-			fileStream.read(readTextChar.get(), size);
+			return readContent;
 
-			return readTextChar.get();
+			/*open(std::ios::in | std::ios::binary);
+
+			std::unique_ptr<char> readTextChar(new char[size+1]);
+			if (offset > 0) {
+				seekPosition(offset);
+			}
+			fileStream.read(readTextChar.get(), size+1);*/
+
+			//std::string output = readTextChar.get();
+			//output[size] = '\0';
+			//std::cout << output[size] << std::endl;
+			//return output;
+		}
+
+		template <typename Type, typename = typename std::enable_if<std::is_same<Type, std::string>::value>::type>
+		Type read(std::size_t size) {
+			return readWithOffset<Type>(size, 0);
 		}
 
 		void seekPosition(std::size_t offsetPosition, std::ios_base::seekdir position = std::ios::beg) {
@@ -152,7 +178,7 @@ namespace evt {
 	class PlainTextFileIO : private BaseFileIO {
 	public:
 
-		PlainTextFileIO(const std::string& fileName, const Mode mode = Mode::plainText) : BaseFileIO(fileName, mode) {}
+		PlainTextFileIO(const std::string& fileName) : BaseFileIO(fileName) {}
 
 		template <typename Type>
 		void write(const Type& contentToWrite, bool appendContent = true) {
@@ -163,14 +189,22 @@ namespace evt {
 			fileStream << contentToWrite;
 		}
 
-		// Reads text content word by word
-		std::string read() {
+		/// Reads text content word by word
+		std::string readWithOffset(std::size_t offset = 0) {
 
 			std::string readContent;
 			open(std::ios::in);
+			if (offset > 0) {
+				seekInputPosition(offset);
+			}
 			fileStream >> readContent;
 
 			return readContent;
+		}
+
+		/// Reads text content word by word
+		std::string read() {
+			return readWithOffset(0);
 		}
 
 		std::string getline() {
